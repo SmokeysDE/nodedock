@@ -1,6 +1,7 @@
 import express from 'express';
 import mysql from 'mysql';
 import cors from 'cors';
+import jwt from 'jsonwebtoken';
 
 const app = express();
 const db = mysql.createConnection({
@@ -30,6 +31,36 @@ db.connect((err) => {
 app.get('/', (req, res) => {
     res.json('Hello World');
 });
+
+app.post('/api/login', (req, res) => {
+    const { uname, pass } = req.body;
+
+    // Überprüfen, ob der Benutzer in der Datenbank existiert
+    const userQuery = 'SELECT * FROM user WHERE uname = ? AND pass = ?';
+    db.query(userQuery, [uname, pass], (err, results) => {
+        if (err) {
+            res.status(500).json({ error: 'Database error' });
+        } else {
+            if (results.length === 1) {
+                // Der Benutzer existiert, daher können wir den Token signieren und senden
+                const user = { uname, pass };
+
+                jwt.sign({ user }, 'secret_key', { expiresIn: '1h' }, (err, token) => {
+                    if (err) {
+                        res.status(500).json({ error: 'Failed to generate token' });
+                    } else {
+                        // Senden des JWT als Antwort
+                        res.json({ token });
+                    }
+                });
+            } else {
+                // Der Benutzer existiert nicht
+                res.status(401).json({ error: 'Invalid credentials' });
+            }
+        }
+    });
+});
+
 app.get('/api/user', (req, res) => {
     const q = 'SELECT * FROM user';
     db.query(q, (err, result) => {
