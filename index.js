@@ -5,10 +5,10 @@ import jwt from 'jsonwebtoken';
 
 const app = express();
 const db = mysql.createConnection({
-    host: '0.0.0.0',
-    user: 'root',
-    port: '3306',
-    password: 'secret',
+    host: '172.17.0.3',  // MySQL container IP address
+    port: '3306',        // MySQL port in the container
+    user: 'root',        // MySQL username (usually root)
+    password: 'secret',  // MySQL root password
     database: 'Data'
 });
 
