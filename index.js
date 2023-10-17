@@ -5,11 +5,11 @@ import jwt from 'jsonwebtoken';
 
 const app = express();
 const db = mysql.createConnection({
-    host: 'app-db.cpinycsnk7ay.eu-central-1.rds.amazonaws.com',
-    user: 'admin',
+    host: '0.0.0.0',
+    user: 'root',
     port: '3306',
-    password: 'soloma210596',
-    database: 'AppData'
+    password: 'secret',
+    database: 'Data'
 });
 
 app.use(express.json());
